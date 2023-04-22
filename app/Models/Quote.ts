@@ -1,18 +1,30 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
+import { HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
+
+import User from './User'
 import Job from './Job'
 
-export default class Image extends BaseModel {
+export default class Quote extends BaseModel {
   @column({ isPrimary: true })
   public id: number
 
   @column()
-  public title: string
+  public comments: string
 
   @column()
-  public path: string
+  public quote: number
 
-  @belongsTo(() => Job)
+  @column()
+  public userId: number
+
+  @belongsTo(() => User, { foreignKey: 'userId' })
+  public user: BelongsTo<typeof User>
+
+  @column()
+  public jobId: number
+
+  @belongsTo(() => Job, { foreignKey: 'jobId' })
   public job: BelongsTo<typeof Job>
 
   @column.dateTime({ autoCreate: true })

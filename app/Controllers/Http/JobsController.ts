@@ -1,17 +1,20 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Client from 'App/Models/Client'
+
+import User from 'App/Models/User'
 import Job from 'App/Models/Job'
+import Quote from 'App/Models/Quote'
+
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
 export default class JobsController {
   public async getAllJobs() {
-    const jobs = await Job.query().preload('client').exec()
+    const jobs = await Job.query().preload('user').exec()
     return jobs
   }
 
   public async index({ session }) {
-    const client = await Client.find(session.get('client'))
-    const jobs = await client.related('jobs').query().orderBy('created_at', 'desc')
+    const user = await User.find(session.get('userId'))
+    const jobs = await user.related('jobs').query().orderBy('created_at', 'desc')
     return jobs
   }
 
@@ -25,16 +28,31 @@ export default class JobsController {
     try {
       const payload = await request.validate({ schema: newJobSchema })
       const data = request.only(['type_of_clothing', 'description', 'budget'])
-      const client = session.get('client')
-
-      console.log(data)
-
-      data['clientId'] = client
-      data['budget'] = data['budget'] === '' ? null : data['budget']
-
-      const job = await Job.create(data)
+      const job = await Job.create({ ...payload, userId: session.get('userId') })
 
       return job
+    } catch (error) {
+      console.log(error)
+      response.badRequest(error.messages)
+    }
+  }
+
+  public async quote({ request, response, session }: HttpContextContract) {
+    const newJobSchema = schema.create({
+      quote: schema.number(),
+      comments: schema.string.optional(),
+      job_id: schema.number(),
+    })
+
+    try {
+      const payload = await request.validate({ schema: newJobSchema })
+      const job = await Job.find(payload.job_id)
+
+      let q = { jobId: job.id, userId: session.get('userId'), quote: payload.quote }
+
+      const quote = await Quote.create(q)
+
+      return quote
     } catch (error) {
       console.log(error)
       response.badRequest(error.messages)

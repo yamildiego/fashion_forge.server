@@ -31,9 +31,10 @@ Route.post('/user/getCreatedUser', 'UsersController.getCreatedUser')
 
 // Route.post('/client/getCreatedClient', 'ClientsController.getCreatedClient')
 
-// Route.get('/jobs', 'JobsController.index')
+Route.post('/job', 'JobsController.store')
+Route.post('/job/quote', 'JobsController.quote')
+Route.get('/jobs', 'JobsController.index')
 // Route.get('/getAllJobs', 'JobsController.getAllJobs')
-// Route.post('/job', 'JobsController.store')
 
 // Route.get('/client/:id', 'ClientsController.show')
 // Route.put('/client/:id', 'ClientsController.update')
