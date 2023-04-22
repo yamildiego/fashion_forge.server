@@ -27,6 +27,7 @@ Route.get('/', async ({}) => {
 })
 
 Route.post('/user', 'UsersController.store')
+Route.post('/user/getCreatedUser', 'UsersController.getCreatedUser')
 
 // Route.post('/client/getCreatedClient', 'ClientsController.getCreatedClient')
 
