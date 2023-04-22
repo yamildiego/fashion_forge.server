@@ -50,7 +50,7 @@ export default class UsersController {
     }
   }
 
-  public async getCreatedUser({ request, response, session }: HttpContextContract) {
+  public async signInUser({ request, response, session }: HttpContextContract) {
     validator.rule(
       'existsUser',
       async (value: any, args: any, ctx: HttpContextContract) => {
