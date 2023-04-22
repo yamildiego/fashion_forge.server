@@ -8,8 +8,8 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
 export default class JobsController {
   public async getAllJobs() {
-    const jobs = await Job.query().preload('user').exec()
-    return jobs
+    const jobsWithQuotes = await Job.query().preload('quotes').exec()
+    return jobsWithQuotes
   }
 
   public async index({ session }) {
@@ -48,9 +48,10 @@ export default class JobsController {
       const payload = await request.validate({ schema: newJobSchema })
       const job = await Job.find(payload.job_id)
 
-      let q = { jobId: job.id, userId: session.get('userId'), quote: payload.quote }
+      // 15% is added for the cost
+      let quoteData = { jobId: job.id, userId: session.get('userId'), quote: payload.quote * 1.15 }
 
-      const quote = await Quote.create(q)
+      const quote = await Quote.create(quoteData)
 
       return quote
     } catch (error) {
