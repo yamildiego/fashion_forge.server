@@ -26,12 +26,13 @@ Route.get('/', async ({}) => {
   }
 })
 
-Route.post('/client', 'ClientsController.store')
-Route.post('/client/getCreatedClient', 'ClientsController.getCreatedClient')
+Route.post('/user', 'UsersController.store')
 
-Route.get('/jobs', 'JobsController.index')
-Route.get('/getAllJobs', 'JobsController.getAllJobs')
-Route.post('/job', 'JobsController.store')
+// Route.post('/client/getCreatedClient', 'ClientsController.getCreatedClient')
+
+// Route.get('/jobs', 'JobsController.index')
+// Route.get('/getAllJobs', 'JobsController.getAllJobs')
+// Route.post('/job', 'JobsController.store')
 
 // Route.get('/client/:id', 'ClientsController.show')
 // Route.put('/client/:id', 'ClientsController.update')
