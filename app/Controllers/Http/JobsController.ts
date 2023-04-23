@@ -5,11 +5,6 @@ import Quote from 'App/Models/Quote'
 
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
-// import { cuid } from '@ioc:Adonis/Core/Helpers'
-// import fs from 'fs/promises'
-// import sharp from 'sharp'
-// import { Helpers } from '@adonisjs/core/build/standalone'
-
 export default class JobsController {
   public async getAllJobs() {
     const jobsWithQuotes = await Job.query().preload('quotes').exec()
@@ -18,7 +13,8 @@ export default class JobsController {
 
   public async index({ session }) {
     const user = await User.find(session.get('userId'))
-    const jobs = await user.related('jobs').query().orderBy('created_at', 'desc')
+    let jobs: any[] = []
+    if (user !== null) jobs = await user.related('jobs').query().orderBy('created_at', 'desc')
     return jobs
   }
 
@@ -52,99 +48,19 @@ export default class JobsController {
       const job = await Job.find(payload.job_id)
 
       // 15% is added for the cost
-      let quoteData = { jobId: job.id, userId: session.get('userId'), quote: payload.quote * 1.15 }
-
-      const quote = await Quote.create(quoteData)
-
-      return quote
+      if (job !== null) {
+        let quoteData = {
+          jobId: job.id,
+          userId: session.get('userId'),
+          quote: payload.quote * 1.15,
+        }
+        const quote = await Quote.create(quoteData)
+        return quote
+      }
+      //TODO: else return unexpected error
     } catch (error) {
       console.log(error)
       response.badRequest(error.messages)
     }
-  }
-
-  // public async upload({ request, response }: HttpContextContract) {
-  //   const images = request.files('images', {
-  //     extnames: ['jpg', 'jpeg', 'png'],
-  //     size: '2mb',
-  //     limit: 5,
-  //   })
-
-  //   let sum: sharp.Sharp = sharp({
-  //     create: {
-  //       width: 1200,
-  //       height: 1600,
-  //       channels: 4,
-  //       background: { r: 255, g: 255, b: 255, alpha: 0 },
-  //     },
-  //   })
-
-  //   for await (const image of images) {
-  //     const filePath = Helpers.tmpPath(`${cuid()}.${image.extname}`)
-  //     await image.move(filePath)
-  //     const imageBuffer = await fs.readFile(filePath)
-  //     sum = sum
-  //       .extend({
-  //         top: 0,
-  //         bottom: 0,
-  //         left: 0,
-  //         right: 0,
-  //         background: { r: 255, g: 255, b: 255, alpha: 0 },
-  //       })
-  //       .composite([{ input: imageBuffer }])
-  //     await fs.unlink(filePath)
-  //   }
-
-  //   const outputBuffer = await sum.png().toBuffer()
-  //   // response.type('png').send(outputBuffer)
-  //   response.type('png').attachment('tmp/output.png').send(outputBuffer)
-  // }
-  public async upload({ request, response }: HttpContextContract) {
-    const images = request.files('images', {
-      extnames: ['jpg', 'jpeg', 'png'],
-      size: '2mb',
-      limit: 5,
-    })
-
-    let sum: sharp.Sharp = sharp({
-      create: {
-        width: 1200,
-        height: 1600,
-        channels: 4,
-        background: { r: 255, g: 255, b: 255, alpha: 0 },
-      },
-    })
-
-    // Obtener la ruta del directorio public
-    // const publicDir = path.join(__dirname, '..', 'public')
-
-    for await (const image of images) {
-      const filePath = Helpers.tmpPath(`${cuid()}.${image.extname}`)
-      // const filePath = path.join(publicDir, `${cuid()}.${image.extname}`)
-      await image.move(filePath)
-      const imageBuffer = await fs.readFile(filePath)
-      sum = sum
-        .extend({
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: { r: 255, g: 255, b: 255, alpha: 0 },
-        })
-        .composite([{ input: imageBuffer }])
-    }
-
-    const outputBuffer = await sum.png().toBuffer()
-
-    // Guardar la imagen en el directorio public
-    const imageName = `${cuid()}.png`
-    const imagePath = path.join(publicDir, imageName)
-    await fs.writeFile(imagePath, outputBuffer)
-
-    // Construir la URL de la imagen
-    const imageUrl = `https://${request.hostname()}/${imageName}`
-
-    // Devolver la URL de la imagen en la respuesta HTTP
-    response.type('png').send(imageUrl)
   }
 }

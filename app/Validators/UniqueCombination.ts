@@ -1,6 +1,6 @@
+// @ts-ignore
 import { ValidationRuleContract } from '@ioc:Adonis/Core/Validator'
 import { DatabaseContract } from '@ioc:Adonis/Lucid/Database'
-import { ModelQueryBuilderContract } from '@ioc:Adonis/Lucid/Orm'
 
 import User from 'App/Models/User'
 
@@ -9,20 +9,19 @@ export default class UniqueCombination implements ValidationRuleContract {
 
   public compile(args: any[]) {
     const fieldNames = args['column']
-    const table = args['table']
-    return [fieldNames, table]
+    return [fieldNames]
   }
 
   public async validate(values: { [key: string]: string }, args: any[]) {
-    const isCreated = await this.getIsAlreadyCreated(args, values)
+    const isCreated: number = await this.getIsAlreadyCreated(args, values)
     return isCreated == 0
   }
 
   protected async getIsAlreadyCreated(
     args: any[],
     values: { [key: string]: string }
-  ): Promise<ModelQueryBuilderContract<any>> {
-    const [fieldNames, table] = this.compile(args)
+  ): Promise<number> {
+    const [fieldNames] = this.compile(args)
 
     const query = User.query()
 

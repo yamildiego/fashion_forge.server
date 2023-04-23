@@ -12,6 +12,8 @@ export default sessionConfig({
     sameSite: false,
   },
   age: '2h',
-  file: {}, // see the file driver
+  file: {
+    location: '/tmp/sessions',
+  }, // see the file driver
   redisConnection: 'local', // see the redis driver
 })

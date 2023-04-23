@@ -1,6 +1,6 @@
+// @ts-ignore
 import { ValidationRuleContract } from '@ioc:Adonis/Core/Validator'
 import { DatabaseContract } from '@ioc:Adonis/Lucid/Database'
-import { ModelQueryBuilderContract } from '@ioc:Adonis/Lucid/Orm'
 
 import User from 'App/Models/User'
 
@@ -20,7 +20,7 @@ export default class ExistsUser implements ValidationRuleContract {
   protected async getIsAlreadyCreated(
     args: any[],
     values: { [key: string]: string }
-  ): Promise<ModelQueryBuilderContract<any>> {
+  ): Promise<number> {
     const [fieldNames] = this.compile(args)
 
     const query = User.query()
