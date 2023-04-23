@@ -20,14 +20,13 @@ export default class JobsController {
 
   public async store({ request, response, session }: HttpContextContract) {
     const newJobSchema = schema.create({
-      type_of_clothing: schema.string(),
+      type_of_clothing: schema.string([rules.maxLength(25)]),
       description: schema.string(),
       budget: schema.number.optional(),
     })
 
     try {
       const payload = await request.validate({ schema: newJobSchema })
-      const data = request.only(['type_of_clothing', 'description', 'budget'])
       const job = await Job.create({ ...payload, userId: session.get('userId') })
 
       return job
