@@ -9,10 +9,13 @@ export default class User extends BaseModel {
   public id: number
 
   @column()
-  public name: string
+  public business_name: string | null
 
   @column()
-  public lastname: string
+  public name: string | null
+
+  @column()
+  public lastname: string | null
 
   @column()
   public phone: string
