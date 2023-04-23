@@ -5,7 +5,7 @@ import User from 'App/Models/User'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { validator } from '@ioc:Adonis/Core/Validator'
-import UniqueCombination from 'App/Validators/uniqueCombination'
+import UniqueCombination from 'App/Validators/UniqueCombination'
 
 import ExistsUser from 'App/Validators/ExistsUser'
 
