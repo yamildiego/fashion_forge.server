@@ -1,32 +1,15 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-
-import User from 'App/Models/User'
-
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
-import Database from '@ioc:Adonis/Lucid/Database'
-import { validator } from '@ioc:Adonis/Core/Validator'
-import UniqueCombination from 'App/Validators/UniqueCombination'
-
-import ExistsUser from 'App/Validators/ExistsUser'
 
 import { UserType } from '../../Enums/UserType'
 
+import User from 'App/Models/User'
+
+import 'App/Rules/uniqueCombination'
+import 'App/Rules/existsUser'
+
 export default class UsersController {
   public async store({ request, response, session }: HttpContextContract) {
-    validator.rule(
-      'uniqueCombination',
-      async (value: any, args: any, ctx: any) => {
-        const isValid = await new UniqueCombination(Database).validate(
-          { user_type: value, email: ctx.root.email },
-          args
-        )
-        if (!isValid) ctx.errorReporter.report('email', 'unique')
-      },
-      () => {
-        return { async: true, compiledOptions: { column: ['email', 'user_type'], table: 'users' } }
-      }
-    )
-
     const data = request.only(['user_type'])
     const newUserSchema = schema.create({
       ...(data.user_type == 'MAKER'
@@ -66,20 +49,6 @@ export default class UsersController {
   }
 
   public async signInUser({ request, response, session }: HttpContextContract) {
-    validator.rule(
-      'existsUser',
-      async (value: any, args: any, ctx: any) => {
-        const isValid = await new ExistsUser(Database).validate(
-          { user_type: value, email: ctx.root.email },
-          args
-        )
-        if (!isValid) ctx.errorReporter.report('email', 'existsUser')
-      },
-      () => {
-        return { async: true, compiledOptions: { column: ['email', 'user_type'], table: 'users' } }
-      }
-    )
-
     const userSchema = schema.create({
       email: schema.string([rules.email()]),
       user_type: schema.string([rules.enum(['CLIENT', 'MAKER']), rules.existsUser()]),
