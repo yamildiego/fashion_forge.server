@@ -47,7 +47,10 @@ export default class UsersController {
 
       if (user !== null) session.put('userId', user.id)
 
-      return user
+      let userData = user.toJSON()
+
+      delete userData.password
+      return userData
     } catch (error) {
       console.log(error)
       response.badRequest(error.messages)
@@ -71,7 +74,10 @@ export default class UsersController {
 
       if (user !== null) session.put('userId', user.id)
 
-      return user
+      let userData = user.toJSON()
+
+      delete userData.password
+      return userData
     } catch (error) {
       console.log(error)
       response.badRequest(error.messages)

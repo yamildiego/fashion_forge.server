@@ -27,6 +27,7 @@ export default class ExistsUser implements ValidationRuleContract {
 
     query.where(fieldNames[0], values[fieldNames[0]])
     query.andWhere(fieldNames[1], values[fieldNames[1]])
+    query.andWhere(fieldNames[2], values[fieldNames[2]])
 
     const count = await query.count('*')
 
