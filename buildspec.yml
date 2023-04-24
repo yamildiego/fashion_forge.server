@@ -25,5 +25,5 @@ env:
     PG_PORT: '5432'
     PG_USER: 'postgres'
     PG_PASSWORD: 'postgres'
-    PG_DB_NAME: 'tmi'
+    PG_DB_NAME: 'postgres'
     SESSION_DRIVER: 'cookie'
