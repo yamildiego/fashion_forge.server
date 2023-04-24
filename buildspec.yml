@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - npm install
+  build:
+    commands:
+      - npm run build
+      - node ace migration:run
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: no
+  base-directory: build
+env:
+  variables:
+    PORT: '3333'
+    HOST: '0.0.0.0'
+    NODE_ENV: 'development'
+    APP_KEY: 'uzw-kIu12OJI-rXJXuSl0qA559sRcIL2'
+    DRIVE_DISK: 'local'
+    DB_CONNECTION: 'pg'
+    PG_HOST: 'database-1.cwgjitqin4x7.ap-southeast-2.rds.amazonaws.com'
+    PG_PORT: '5432'
+    PG_USER: 'postgres'
+    PG_PASSWORD: 'postgres'
+    PG_DB_NAME: 'postgres'
+    SESSION_DRIVER: 'cookie'
