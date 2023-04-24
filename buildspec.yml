@@ -1,6 +1,6 @@
 version: 0.2
 parameter-store:
-  HOST: 'HOST'
+  HOST: '/tmi/HOST'
 phases:
   pre_build:
     commands:
