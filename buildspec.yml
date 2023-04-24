@@ -16,7 +16,7 @@ artifacts:
 env:
   variables:
     PORT: '{{resolve:ssm:/tmi/PORT}}'
-    HOST: '{{resolve:ssm:/tmi/HOST}}'
+    HOST: '{{ssm:HOST}}'
     APP_KEY: '{{resolve:ssm:/tmi/APP_KEY}}'
     DRIVE_DISK: '{{resolve:ssm:/tmi/DRIVE_DISK}}'
     PG_HOST: '{{resolve:ssm:/tmi/PG_HOST}}'
