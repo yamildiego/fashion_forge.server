@@ -72,12 +72,12 @@ export default class UsersController {
         .andWhere('password', md5(payload.password))
         .first()
 
-      if (user !== null) session.put('userId', user.id)
-
-      let userData = user.toJSON()
-
-      delete userData.password
-      return userData
+      if (user !== null) {
+        var userData = user.toJSON()
+        delete userData.password
+        session.put('userId', user.id)
+        return userData
+      }
     } catch (error) {
       console.log(error)
       response.badRequest(error.messages)
