@@ -1,6 +1,5 @@
 version: 0.2
-parameter-store:
-  HOST: '/tmi/HOST'
+
 phases:
   pre_build:
     commands:
@@ -16,15 +15,15 @@ artifacts:
   base-directory: build
 env:
   variables:
-    PORT: '{{resolve:ssm:/tmi/PORT}}'
-    HOST: echo $HOST
-    APP_KEY: '{{resolve:ssm:/tmi/APP_KEY}}'
-    DRIVE_DISK: '{{resolve:ssm:/tmi/DRIVE_DISK}}'
-    PG_HOST: '{{resolve:ssm:/tmi/PG_HOST}}'
-    PG_USER: '{{resolve:ssm:/tmi/PG_USER}}'
-    PG_DB_NAME: '{{resolve:ssm:/tmi/PG_DB_NAME}}'
+    PORT: '3333'
+    HOST: '0.0.0.0'
     NODE_ENV: 'development'
+    APP_KEY: 'uzw-kIu12OJI-rXJXuSl0qA559sRcIL2'
+    DRIVE_DISK: 'local'
     DB_CONNECTION: 'pg'
-    PG_PASSWORD: '{{resolve:ssm:/tmi/PG_PASSWORD}}'
-    PG_PORT: '{{resolve:ssm:/tmi/PG_PORT}}'
+    PG_HOST: 'database-1.cwgjitqin4x7.ap-southeast-2.rds.amazonaws.com'
+    PG_PORT: '5432'
+    PG_USER: 'postgres'
+    PG_PASSWORD: 'postgres'
+    PG_DB_NAME: 'postgres'
     SESSION_DRIVER: 'cookie'
