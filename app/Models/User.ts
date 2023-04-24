@@ -29,6 +29,9 @@ export default class User extends BaseModel {
   public email: string
 
   @column()
+  public password: string
+
+  @column()
   public address: string | null
 
   @column()

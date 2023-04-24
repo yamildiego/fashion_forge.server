@@ -4,6 +4,7 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import { UserType } from '../../Enums/UserType'
 
 import User from 'App/Models/User'
+import md5 from 'crypto-js/md5'
 
 import 'App/Rules/uniqueCombination'
 import 'App/Rules/existsUser'
@@ -30,6 +31,7 @@ export default class UsersController {
             postcode: schema.string([rules.maxLength(10)]),
           }),
       phone: schema.string([rules.maxLength(20)]),
+      password: schema.string([rules.minLength(8)]),
       user_type: schema.string({}, [rules.enum(['CLIENT', 'MAKER']), rules.uniqueCombination()]),
       email: schema.string([rules.email(), rules.maxLength(200)]),
     })
@@ -37,7 +39,11 @@ export default class UsersController {
     try {
       const payload = await request.validate({ schema: newUserSchema })
 
-      const user = await User.create({ ...payload, user_type: payload.user_type as UserType })
+      const user = await User.create({
+        ...payload,
+        password: md5(payload.password),
+        user_type: payload.user_type as UserType,
+      })
 
       if (user !== null) session.put('userId', user.id)
 
@@ -51,6 +57,7 @@ export default class UsersController {
   public async signInUser({ request, response, session }: HttpContextContract) {
     const userSchema = schema.create({
       email: schema.string([rules.email()]),
+      password: schema.string(),
       user_type: schema.string([rules.enum(['CLIENT', 'MAKER']), rules.existsUser()]),
     })
 
@@ -59,6 +66,7 @@ export default class UsersController {
       const user = await User.query()
         .where('email', payload.email)
         .andWhere('user_type', payload.user_type)
+        .andWhere('password', md5(payload.password))
         .first()
 
       if (user !== null) session.put('userId', user.id)
