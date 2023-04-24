@@ -13,3 +13,17 @@ artifacts:
     - '**/*'
   discard-paths: no
   base-directory: build
+env:
+  variables:
+    PORT: '3333'
+    HOST: '0.0.0.0'
+    NODE_ENV: 'development'
+    APP_KEY: 'uzw-kIu12OJI-rXJXuSl0qA559sRcIL2'
+    DRIVE_DISK: 'local'
+    DB_CONNECTION: 'pg'
+    PG_HOST: 'localhost'
+    PG_PORT: '5432'
+    PG_USER: 'postgres'
+    PG_PASSWORD: 'postgres'
+    PG_DB_NAME: 'tmi'
+    SESSION_DRIVER: 'cookie'
