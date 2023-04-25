@@ -34,7 +34,9 @@ Route.post('/user/signInUser', 'UsersController.signInUser')
 Route.post('/job', 'JobsController.store')
 Route.post('/job/quote', 'JobsController.quote')
 Route.get('/jobs', 'JobsController.index')
-Route.get('/getAllJobs', 'JobsController.getAllJobs')
+Route.post('/getJobsByFilter', 'JobsController.getJobsByFilter')
+
+Route.post('/newQuote', 'JobsController.quote')
 
 // Route.post('/job/upload', 'JobsController.upload')
 // Route.get('/client/:id', 'ClientsController.show')

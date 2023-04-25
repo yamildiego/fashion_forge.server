@@ -15,6 +15,9 @@ export default class Quote extends BaseModel {
   public quote: number
 
   @column()
+  public estimated_time: number
+
+  @column()
   public userId: number
 
   @belongsTo(() => User, { foreignKey: 'userId' })
