@@ -6,7 +6,7 @@ import Quote from 'App/Models/Quote'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
 export default class JobsController {
-  public async getJobsByFilter({ request, response, session }: HttpContextContract) {
+  public async jobsByFilter({ request, response, session }: HttpContextContract) {
     const newFilterSchema = schema.create({
       type_of_clothing: schema.string.optional(),
       state: schema.string.optional(),
@@ -41,14 +41,18 @@ export default class JobsController {
     return jobsWithQuotes
   }
 
-  public async index({ session }) {
-    const user = await User.find(session.get('userId'))
-    let jobs: any[] = []
-    if (user !== null) jobs = await user.related('jobs').query().orderBy('created_at', 'desc')
-    return jobs
+  public async index({ request }) {
+    const user = await User.find(request.user.id)
+    try {
+      let jobs: any[] = []
+      if (user !== null) jobs = await user.related('jobs').query().orderBy('created_at', 'desc')
+      return jobs
+    } catch (error) {
+      response.badRequest(error.messages)
+    }
   }
 
-  public async store({ request, response, session }: HttpContextContract) {
+  public async store({ request, response }: HttpContextContract) {
     const newJobSchema = schema.create({
       type_of_clothing: schema.string([rules.maxLength(25)]),
       description: schema.string(),
@@ -57,7 +61,7 @@ export default class JobsController {
 
     try {
       const payload = await request.validate({ schema: newJobSchema })
-      const job = await Job.create({ ...payload, userId: session.get('userId') })
+      const job = await Job.create({ ...payload, userId: request.user.id })
 
       return job
     } catch (error) {
@@ -66,7 +70,7 @@ export default class JobsController {
     }
   }
 
-  public async quote({ request, response, session }: HttpContextContract) {
+  public async quote({ request, response, request }: HttpContextContract) {
     const newJobSchema = schema.create({
       quote: schema.number(),
       estimated_time: schema.number.optional(),
@@ -84,13 +88,12 @@ export default class JobsController {
           jobId: job.id,
           comments: payload.comments,
           estimated_time: payload.estimated_time,
-          userId: session.get('userId'),
+          userId: request.user.id,
           quote: (parseInt(payload.quote) * 1.15).toFixed(2),
         }
         const quote = await Quote.create(quoteData)
         return quote
-      }
-      //TODO: else return unexpected error
+      } else return 'unexpected_error'
     } catch (error) {
       console.log(error)
       response.badRequest(error.messages)
