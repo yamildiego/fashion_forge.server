@@ -15,7 +15,7 @@ export default sessionConfig({
   file: {
     location: '/tmp/sessions',
     driver: 'file',
-    fileMode: 0777,
+    fileMode: 0o777,
   },
   redisConnection: 'local',
 })
