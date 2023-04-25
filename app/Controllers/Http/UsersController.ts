@@ -8,6 +8,7 @@ import md5 from 'crypto-js/md5'
 
 import 'App/Rules/uniqueCombination'
 import 'App/Rules/existsUser'
+import 'App/Rules/matchPassword'
 
 export default class UsersController {
   public async store({ request, response, session }: HttpContextContract) {
@@ -32,12 +33,15 @@ export default class UsersController {
           }),
       phone: schema.string([rules.maxLength(20)]),
       password: schema.string([rules.minLength(8)]),
+      confirm_password: schema.string([rules.matchPassword()]),
       user_type: schema.string({}, [rules.enum(['CLIENT', 'MAKER']), rules.uniqueCombination()]),
       email: schema.string([rules.email(), rules.maxLength(200)]),
     })
 
     try {
       const payload = await request.validate({ schema: newUserSchema })
+
+      delete payload.confirm_password
 
       const user = await User.create({
         ...payload,
