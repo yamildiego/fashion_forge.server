@@ -2,8 +2,11 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import Job from 'App/Models/Job'
 import Quote from 'App/Models/Quote'
+import nodemailer from 'nodemailer'
 
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
+
+import mailConfig from '../../../config/mailConfig'
 
 export default class JobsController {
   public async jobsByFilter({ request, response, session }: HttpContextContract) {
@@ -70,7 +73,7 @@ export default class JobsController {
     }
   }
 
-  public async quote({ request, response, request }: HttpContextContract) {
+  public async quote({ request, response }: HttpContextContract) {
     const newJobSchema = schema.create({
       quote: schema.number(),
       estimated_time: schema.number.optional(),
@@ -98,5 +101,25 @@ export default class JobsController {
       console.log(error)
       response.badRequest(error.messages)
     }
+  }
+
+  public async send({ request }: HttpContextContract) {
+    const transporter = nodemailer.createTransport(mailConfig)
+    transporter.verify().then(console.log).catch(console.error)
+
+    transporter
+      .sendMail({
+        from: '"Test Meydit" <yamildiego91@gmail.com>', // sender address
+        to: 'yamildiego@gmail.com', // list of receivers
+        subject: 'Meyd.it Iternship ✔', // Subject line
+        text: "There is a new article. It's about sending emails, check it out!", // plain text body
+        html: "<b>There is a new article. It's about sending emails, check it out!</b>", // html body
+      })
+      .then((info) => {
+        console.log({ info })
+      })
+      .catch(console.error)
+
+    return { message: 'El correo electrónico ha sido enviado correctamente.' }
   }
 }
