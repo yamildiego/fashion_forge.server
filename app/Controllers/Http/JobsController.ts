@@ -107,6 +107,9 @@ export default class JobsController {
     const transporter = nodemailer.createTransport(mailConfig)
     transporter.verify().then(console.log).catch(console.error)
 
+    console.log("mailConfig")
+    console.log(mailConfig)
+
     transporter
       .sendMail({
         from: '"Test Meydit" <yamildiego91@gmail.com>', // sender address
