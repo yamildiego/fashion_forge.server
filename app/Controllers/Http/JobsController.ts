@@ -9,7 +9,7 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import mailConfig from '../../../config/mailConfig'
 
 export default class JobsController {
-  public async jobsByFilter({ request, response, session }: HttpContextContract) {
+  public async jobsByFilter({ request }: HttpContextContract) {
     const newFilterSchema = schema.create({
       type_of_clothing: schema.string.optional(),
       state: schema.string.optional(),
@@ -28,13 +28,13 @@ export default class JobsController {
 
         if (payload.state && payload.state.toUpperCase() !== 'ALL') {
           query.whereHas('user', (subquery) => {
-            subquery.where('state', payload.state)
+            subquery.where('state', payload.state as string)
           })
         }
 
         if (payload.postcode) {
           query.whereHas('user', (subquery) => {
-            subquery.where('postcode', payload.postcode)
+            subquery.where('postcode', payload.postcode as string)
           })
         }
       })
@@ -44,7 +44,7 @@ export default class JobsController {
     return jobsWithQuotes
   }
 
-  public async index({ request }) {
+  public async index({ request, response }) {
     const user = await User.find(request.user.id)
     try {
       let jobs: any[] = []
@@ -92,7 +92,7 @@ export default class JobsController {
           comments: payload.comments,
           estimated_time: payload.estimated_time,
           userId: request.user.id,
-          quote: (parseInt(payload.quote) * 1.15).toFixed(2),
+          quote: parseFloat((payload.quote * 1.15).toFixed(2)),
         }
         const quote = await Quote.create(quoteData)
         return quote
@@ -103,7 +103,7 @@ export default class JobsController {
     }
   }
 
-  public async send({ request }: HttpContextContract) {
+  public async send({}: HttpContextContract) {
     const transporter = nodemailer.createTransport(mailConfig)
     transporter.verify().then(console.log).catch(console.error)
 

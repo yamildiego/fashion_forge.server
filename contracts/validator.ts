@@ -3,5 +3,6 @@ declare module '@ioc:Adonis/Core/Validator' {
     uniqueCombination(): Rule
     existsUser(): Rule
     enum(value: any): Rule
+    matchPassword(): Rule
   }
 }

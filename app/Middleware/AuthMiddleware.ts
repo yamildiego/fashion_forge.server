@@ -3,7 +3,7 @@ import User from '../Models/User'
 
 const AuthMiddleware = async (
   { session, response, request }: HttpContextContract,
-  next: () => Promise<void>
+  next: () => void
 ) => {
   const userId = session.get('userId')
 

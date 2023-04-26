@@ -33,7 +33,7 @@ export default class UsersController {
           }),
       phone: schema.string([rules.maxLength(20)]),
       password: schema.string([rules.minLength(8)]),
-      confirm_password: schema.string([rules.matchPassword()]),
+      confirm_password: schema.string.optional([rules.matchPassword()]),
       user_type: schema.string({}, [rules.enum(['CLIENT', 'MAKER']), rules.uniqueCombination()]),
       email: schema.string([rules.email(), rules.maxLength(200)]),
     })
