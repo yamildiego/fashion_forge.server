@@ -9,7 +9,8 @@ export default sessionConfig({
   cookie: {
     path: '/',
     httpOnly: true,
-    sameSite: false,
+    sameSite: 'none',
+    secure: true,
   },
   age: '2h',
   file: {
