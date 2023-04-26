@@ -10,7 +10,7 @@ export default sessionConfig({
     path: '/',
     httpOnly: true,
     sameSite: 'none',
-    secure: true,
+    secure: false,
   },
   age: '2h',
   file: {
