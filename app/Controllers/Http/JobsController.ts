@@ -62,11 +62,34 @@ export default class JobsController {
       type_of_clothing: schema.string([rules.maxLength(25)]),
       description: schema.string(),
       budget: schema.number.optional(),
+      status: schema.string.optional({}, [rules.enum(['DRAFT', 'PUBLISHED'])]),
     })
 
     try {
       const payload = await request.validate({ schema: newJobSchema })
       const job = await Job.create({ ...payload, userId: request.user.id })
+
+      return job
+    } catch (error) {
+      console.log(error)
+      response.badRequest(error.messages)
+    }
+  }
+
+  public async publishJob({ request, response }: HttpContextContract) {
+    const newJobSchema = schema.create({
+      job_id: schema.number(),
+    })
+
+    try {
+      const payload = await request.validate({ schema: newJobSchema })
+
+      const job = await Job.find(payload.job_id)
+
+      if (job.status == 'DRAFT') {
+        job.merge({ status: 'PUBLISHED' })
+        await job.save()
+      }
 
       return job
     } catch (error) {

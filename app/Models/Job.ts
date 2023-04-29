@@ -24,6 +24,11 @@ export default class Job extends BaseModel {
   @belongsTo(() => User, { foreignKey: 'userId' })
   public user: BelongsTo<typeof User>
 
+  @column({
+    serialize: (value: string | null) => (value ? value.toUpperCase() : null),
+  })
+  public status: 'DRAFT' | 'PUBLISHED' | 'ASSINGNED' | 'SHIPPED' | 'FINISHED'
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
