@@ -40,6 +40,7 @@ export default class JobsController {
           })
         }
       })
+      .whereNotIn('status', ['DRAFT'])
       .orderBy('created_at', 'desc')
       .exec()
 
@@ -88,6 +89,32 @@ export default class JobsController {
 
       if (job.status == 'DRAFT') {
         job.merge({ status: 'PUBLISHED' })
+        await job.save()
+      }
+
+      return job
+    } catch (error) {
+      console.log(error)
+      response.badRequest(error.messages)
+    }
+  }
+
+  public async editJob({ request, response }: HttpContextContract) {
+    const newJobSchema = schema.create({
+      id: schema.number(),
+      type_of_clothing: schema.string([rules.maxLength(25)]),
+      description: schema.string(),
+      budget: schema.number.optional(),
+      status: schema.string.optional({}, [rules.enum(['DRAFT', 'PUBLISHED'])]),
+    })
+
+    try {
+      const payload = await request.validate({ schema: newJobSchema })
+
+      const job = await Job.find(payload.id)
+
+      if (job.status == 'DRAFT') {
+        job.merge({ ...payload, budget: payload.budget ? payload.budget : null })
         await job.save()
       }
 
