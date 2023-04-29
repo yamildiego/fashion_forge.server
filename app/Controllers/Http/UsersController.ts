@@ -87,4 +87,9 @@ export default class UsersController {
       response.badRequest(error.messages)
     }
   }
+
+  public async signOutUser({ request, response, session }: HttpContextContract) {
+    session.put('userId', null)
+    return 'OK'
+  }
 }
