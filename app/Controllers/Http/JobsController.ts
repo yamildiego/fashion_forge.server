@@ -3,10 +3,12 @@ import User from 'App/Models/User'
 import Job from 'App/Models/Job'
 import Quote from 'App/Models/Quote'
 import nodemailer from 'nodemailer'
-
+import fs from 'fs'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
 import mailConfig from '../../../config/mailConfig'
+
+import TypesOfClothing from 'App/Assets/TypesOfClothing.json'
 
 export default class JobsController {
   public async jobsByFilter({ request }: HttpContextContract) {
@@ -75,15 +77,18 @@ export default class JobsController {
 
   public async quote({ request, response }: HttpContextContract) {
     const newJobSchema = schema.create({
-      quote: schema.number(),
+      quote: schema.string(),
       estimated_time: schema.number.optional(),
       comments: schema.string.optional(),
       job_id: schema.number(),
     })
 
+    let quote = null
+    let job = null
+
     try {
       const payload = await request.validate({ schema: newJobSchema })
-      const job = await Job.find(payload.job_id)
+      job = await Job.query().preload('user').where('id', payload.job_id).firstOrFail()
 
       // 15% is added for the cost
       if (job !== null) {
@@ -92,37 +97,47 @@ export default class JobsController {
           comments: payload.comments,
           estimated_time: payload.estimated_time,
           userId: request.user.id,
-          quote: parseFloat((payload.quote * 1.15).toFixed(2)),
+          quote: parseFloat((parseFloat(payload.quote) * 1.15).toFixed(2)),
         }
-        const quote = await Quote.create(quoteData)
+        quote = await Quote.create(quoteData)
         return quote
       } else return 'unexpected_error'
     } catch (error) {
       console.log(error)
       response.badRequest(error.messages)
+    } finally {
+      if (quote && job) {
+        this.sendEmail(
+          job.user.name,
+          job.user.lastname,
+          job.user.email,
+          TypesOfClothing[job.type_of_clothing],
+          'https://acadeberiairunlionkrea.com/' + quote.id
+        )
+      }
     }
   }
 
-  public async send({}: HttpContextContract) {
+  private sendEmail = (name, lastname, email, job, link) => {
     const transporter = nodemailer.createTransport(mailConfig)
     transporter.verify().then(console.log).catch(console.error)
 
-    console.log("mailConfig")
-    console.log(mailConfig)
+    let html = fs.readFileSync('App/Assets/email.html', 'utf8')
+    html = html.replace('{{NAME}}', name)
+    html = html.replace('{{LASTNAME}}', lastname)
+    html = html.replace('{{JOB}}', job)
+    html = html.replace('{{LINK}}', link)
 
     transporter
       .sendMail({
-        from: '"Test Meydit" <yamildiego91@gmail.com>', // sender address
-        to: 'yamildiego@gmail.com', // list of receivers
-        subject: 'Meyd.it Iternship ✔', // Subject line
-        text: "There is a new article. It's about sending emails, check it out!", // plain text body
-        html: "<b>There is a new article. It's about sending emails, check it out!</b>", // html body
+        from: '"Test Meydit" <yamildiego91@gmail.com>',
+        to: email,
+        subject: 'MEYD.IT Iternship ✔',
+        html: html,
       })
       .then((info) => {
         console.log({ info })
       })
       .catch(console.error)
-
-    return { message: 'El correo electrónico ha sido enviado correctamente.' }
   }
 }

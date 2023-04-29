@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Quote Notification</title>
+  <style>
+    header {
+      background-color: #9b70fe;
+      color: #fff;
+      text-align: left;
+      padding: 1rem;
+      background-image: url('https://meyd.it/img/core-img/white_logo.png');
+      background-position: 20px center;
+      background-repeat: no-repeat;
+      background-size: 80px;
+      padding-left: 20px;
+      height: 90px;
+    }
+
+    main {
+      font-family: Helvetica;
+      font-size: 16px;
+      color: #222;
+      margin: 1rem;
+      text-align: justify;
+    }
+
+    footer {
+      font-family: Helvetica;
+      font-size: 12px;
+      color: #b6b6b6;
+      margin: 1rem;
+    }
+
+    h1 {
+      font-family: Helvetica;
+      padding-left: 105px;
+      line-height: 50px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Quote Notification</h1>
+  </header>
+  <main>
+    <p>Dear {{NAME}} {{LASTNAME}},</p>
+    <p>
+      We are pleased to inform you that your job about {{JOB}} has received a quote.
+    </p>
+    <p>
+      Please click on the link below to view the details:
+    </p>
+    <p><a href="{{LINK}}">View details</a></p>
+  </main>
+  <footer>
+    <p>This email was sent automatically. Please do not reply to this message.</p>
+  </footer>
+</body>
+
+</html>
