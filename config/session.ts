@@ -7,7 +7,7 @@ export default sessionConfig({
   cookieName: 'adonis-session',
   clearWithBrowser: false,
   cookie: {
-    domain: '.yamildiego.com'
+    domain: '.yamildiego.com',
     path: '/',
     httpOnly: true,
     sameSite: 'none',
