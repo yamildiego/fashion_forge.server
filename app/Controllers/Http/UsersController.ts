@@ -88,8 +88,8 @@ export default class UsersController {
     }
   }
 
-  public async signOutUser({ request, response, session }: HttpContextContract) {
-    session.put('userId', null)
+  public async signOutUser({ session }: HttpContextContract) {
+    session.put('userId', '')
     return 'OK'
   }
 }

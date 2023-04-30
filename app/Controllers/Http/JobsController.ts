@@ -1,5 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import User from 'App/Models/User'
+
 import Job from 'App/Models/Job'
 import Quote from 'App/Models/Quote'
 import Image from 'App/Models/Image'
@@ -12,6 +12,8 @@ import mailConfig from '../../../config/mailConfig'
 import TypesOfClothing from 'App/Assets/TypesOfClothing.json'
 
 import Application from '@ioc:Adonis/Core/Application'
+
+type StatusType = 'DRAFT' | 'PUBLISHED' | 'ASSINGNED' | 'SHIPPED' | 'FINISHED'
 
 export default class JobsController {
   public async jobsByFilter({ request }: HttpContextContract) {
@@ -81,7 +83,13 @@ export default class JobsController {
 
     try {
       const payload = await request.validate({ schema: newJobSchema })
-      const job = await Job.create({ ...payload, userId: request.user.id })
+      const job = await Job.create({
+        type_of_clothing: payload.type_of_clothing,
+        description: payload.description,
+        ...(payload.budget ? { budget: payload.budget } : {}),
+        ...(payload.status ? { status: payload.status as StatusType } : {}),
+        userId: request.user.id,
+      })
 
       const images = request.input('images')
 
@@ -110,7 +118,7 @@ export default class JobsController {
 
       const job = await Job.find(payload.job_id)
 
-      if (job.status == 'DRAFT') {
+      if (job !== null && job.status == 'DRAFT') {
         job.merge({ status: 'PUBLISHED' })
         await job.save()
       }
@@ -136,8 +144,13 @@ export default class JobsController {
 
       const job = await Job.find(payload.id)
 
-      if (job.status == 'DRAFT') {
-        job.merge({ ...payload, budget: payload.budget ? payload.budget : null })
+      if (job !== null && job.status == 'DRAFT') {
+        job.merge({
+          type_of_clothing: payload.type_of_clothing,
+          description: payload.description,
+          ...(payload.budget ? { budget: payload.budget } : {}),
+          ...(payload.status ? { status: payload.status as StatusType } : {}),
+        })
         await job.save()
 
         // Update job images
@@ -177,8 +190,8 @@ export default class JobsController {
       job_id: schema.number(),
     })
 
-    let quote = null
-    let job = null
+    let quote: Quote | null = null
+    let job: Job | null = null
 
     try {
       const payload = await request.validate({ schema: newJobSchema })
@@ -236,10 +249,15 @@ export default class JobsController {
   }
 
   public async uploadImages({ request }: HttpContextContract) {
-    const files: MultipartFileContract[] = request.files('images', {
+    // const files: any[] = request.files('images', {
+    //   types: ['image'],
+    //   size: '4mb',
+    // })
+    const files: any[] = {
+      //@ts-ignore
       types: ['image'],
       size: '4mb',
-    })
+    }
 
     const promises = files.map(async (file) => {
       await file.move(Application.publicPath('uploads'), {

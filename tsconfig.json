@@ -9,6 +9,7 @@
   ],
   "compilerOptions": {
     "outDir": "build",
+    "resolveJsonModule": true,
     "rootDir": "./",
     "sourceMap": true,
     "paths": {
