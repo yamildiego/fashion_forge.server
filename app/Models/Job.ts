@@ -4,6 +4,7 @@ import { HasMany, hasMany } from '@ioc:Adonis/Lucid/Orm'
 
 import User from './User'
 import Quote from './Quote'
+import Image from './Image'
 
 export default class Job extends BaseModel {
   @column({ isPrimary: true })
@@ -39,4 +40,9 @@ export default class Job extends BaseModel {
     foreignKey: 'jobId',
   })
   public quotes: HasMany<typeof Quote>
+
+  @hasMany(() => Image, {
+    foreignKey: 'jobId',
+  })
+  public images: HasMany<typeof Image>
 }

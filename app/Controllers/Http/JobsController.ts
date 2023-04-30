@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import User from 'App/Models/User'
 import Job from 'App/Models/Job'
 import Quote from 'App/Models/Quote'
+import Image from 'App/Models/Image'
 import nodemailer from 'nodemailer'
 import fs from 'fs'
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
@@ -9,6 +10,8 @@ import { schema, rules } from '@ioc:Adonis/Core/Validator'
 import mailConfig from '../../../config/mailConfig'
 
 import TypesOfClothing from 'App/Assets/TypesOfClothing.json'
+
+import Application from '@ioc:Adonis/Core/Application'
 
 export default class JobsController {
   public async jobsByFilter({ request }: HttpContextContract) {
@@ -21,6 +24,7 @@ export default class JobsController {
     const payload = await request.validate({ schema: newFilterSchema })
 
     const jobsWithQuotes = await Job.query()
+      .preload('images')
       .preload('quotes')
       .preload('user')
       .where((query) => {
@@ -48,12 +52,21 @@ export default class JobsController {
   }
 
   public async index({ request, response }) {
-    const user = await User.find(request.user.id)
     try {
-      let jobs: any[] = []
-      if (user !== null) jobs = await user.related('jobs').query().orderBy('created_at', 'desc')
+      const jobs = await Job.query()
+        .preload('images')
+        .preload('quotes')
+        .preload('user')
+        .where((query) => {
+          query.whereHas('user', (subquery) => {
+            subquery.where('id', request.user.id)
+          })
+        })
+        .orderBy('created_at', 'desc')
+        .exec()
       return jobs
     } catch (error) {
+      console.log(error)
       response.badRequest(error.messages)
     }
   }
@@ -70,7 +83,17 @@ export default class JobsController {
       const payload = await request.validate({ schema: newJobSchema })
       const job = await Job.create({ ...payload, userId: request.user.id })
 
-      return job
+      const images = request.input('images')
+
+      if (images && Array.isArray(images))
+        images.forEach(
+          async (image) =>
+            await Image.create({ path: `${request.user.id}_${image.path}`, jobId: job.id })
+        )
+
+      const jobCompleted = await Job.query().where('id', job.id).preload('images').first()
+
+      return jobCompleted
     } catch (error) {
       console.log(error)
       response.badRequest(error.messages)
@@ -116,6 +139,27 @@ export default class JobsController {
       if (job.status == 'DRAFT') {
         job.merge({ ...payload, budget: payload.budget ? payload.budget : null })
         await job.save()
+
+        // Update job images
+        const currentImages = await job.related('images').query()
+        const imageIds = request.input('images')?.map((image: any) => image.id) ?? []
+
+        for (const image of currentImages) {
+          if (!imageIds.includes(image.id)) {
+            await image.delete()
+          }
+        }
+
+        for (const imagePayload of request.input('images') ?? []) {
+          if (!imagePayload.id) {
+            // Create new image
+            const image = await Image.create({
+              path: `${request.user.id}_${imagePayload.path}`,
+              jobId: job.id,
+            })
+            job.related('images').save(image)
+          }
+        }
       }
 
       return job
@@ -189,5 +233,26 @@ export default class JobsController {
         console.log({ info })
       })
       .catch(console.error)
+  }
+
+  public async uploadImages({ request }: HttpContextContract) {
+    const files: MultipartFileContract[] = request.files('images', {
+      types: ['image'],
+      size: '4mb',
+    })
+
+    const promises = files.map(async (file) => {
+      await file.move(Application.publicPath('uploads'), {
+        name: `${request.user.id}_${file.clientName}`,
+      })
+    })
+
+    await Promise.all(promises)
+
+    if (files.some((file) => !file.isValid)) {
+      return files.filter((file) => !file.isValid).flatMap((file) => file.errors)
+    }
+
+    return { message: 'OK' }
   }
 }

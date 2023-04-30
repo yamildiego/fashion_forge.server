@@ -6,3 +6,4 @@ coverage
 .env
 tmp
 package-lock.json
+public/uploads

@@ -17,3 +17,5 @@ Route.post('/job/editJob', 'JobsController.editJob').middleware(AuthMiddleware)
 Route.get('/jobs', 'JobsController.index').middleware(AuthMiddleware)
 Route.post('/jobsByFilter', 'JobsController.jobsByFilter').middleware(AuthMiddleware)
 Route.post('/newQuote', 'JobsController.quote').middleware(AuthMiddleware)
+
+Route.post('/job/uploadImages', 'JobsController.uploadImages').middleware(AuthMiddleware)
