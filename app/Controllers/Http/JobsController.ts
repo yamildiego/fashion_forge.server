@@ -249,15 +249,11 @@ export default class JobsController {
   }
 
   public async uploadImages({ request }: HttpContextContract) {
-    // const files: any[] = request.files('images', {
-    //   types: ['image'],
-    //   size: '4mb',
-    // })
-    const files: any[] = {
+    const files: any[] = request.files('images', {
       //@ts-ignore
       types: ['image'],
       size: '4mb',
-    }
+    })
 
     const promises = files.map(async (file) => {
       await file.move(Application.publicPath('uploads'), {
