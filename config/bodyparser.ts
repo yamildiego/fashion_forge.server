@@ -51,7 +51,7 @@ const bodyParserConfig: BodyParserConfig = {
   */
   form: {
     encoding: 'utf-8',
-    limit: '1mb',
+    limit: '6mb',
     queryString: {},
 
     /*
@@ -81,7 +81,7 @@ const bodyParserConfig: BodyParserConfig = {
   */
   raw: {
     encoding: 'utf-8',
-    limit: '1mb',
+    limit: '6mb',
     queryString: {},
     types: ['text/*'],
   },
