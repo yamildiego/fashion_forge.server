@@ -94,6 +94,8 @@ export default class UsersController {
   }
 
   public async getCurrentUser({ request }: HttpContextContract) {
-    return request.user
+    let user = request.user
+    user.password = undefined
+    return user
   }
 }
