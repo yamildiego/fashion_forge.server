@@ -8,9 +8,11 @@ Route.get('/', async ({}) => {
 })
 
 Route.post('/user', 'UsersController.store')
+Route.get('/user', 'UsersController.getCurrentUser').middleware(AuthMiddleware)
 Route.post('/user/signInUser', 'UsersController.signInUser')
 Route.post('/user/signOutUser', 'UsersController.signOutUser')
 
+Route.get('/job/:id', 'JobsController.getJobById').middleware(AuthMiddleware)
 Route.post('/job', 'JobsController.store').middleware(AuthMiddleware)
 Route.post('/job/publishJob', 'JobsController.publishJob').middleware(AuthMiddleware)
 Route.post('/job/editJob', 'JobsController.editJob').middleware(AuthMiddleware)

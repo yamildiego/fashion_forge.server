@@ -75,6 +75,25 @@ export default class JobsController {
     }
   }
 
+  public async getJobById({ params, request }: HttpContextContract) {
+    const newJobSchema = schema.create({ id: schema.number() })
+
+    try {
+      const payload = await request.validate({ schema: newJobSchema, data: params })
+
+      const job = await Job.query()
+        .where('id', payload.id)
+        .preload('quotes')
+        .preload('images')
+        .first()
+
+      return job
+    } catch (error) {
+      console.log(error)
+      response.badRequest(error.messages)
+    }
+  }
+
   public async store({ request, response }: HttpContextContract) {
     const newJobSchema = schema.create({
       type_of_clothing: schema.string([rules.maxLength(25)]),
