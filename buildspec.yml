@@ -8,6 +8,9 @@ phases:
     commands:
       - npm run build
       - node ace migration:run
+      - mkdir -p build/tmp/sessions
+      - chmod 777 build/tmp
+      - chmod 777 build/tmp/sessions
 artifacts:
   files:
     - '**/*'
@@ -17,7 +20,7 @@ env:
   variables:
     PORT: '3333'
     HOST: '0.0.0.0'
-    NODE_ENV: 'production'
+    NODE_ENV: 'development'
     APP_KEY: 'uzw-kIu12OJI-rXJXuSl0qA559sRcIL2'
     DRIVE_DISK: 'local'
     DB_CONNECTION: 'pg'
