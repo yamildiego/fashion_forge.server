@@ -8,9 +8,6 @@ phases:
     commands:
       - npm run build
       - node ace migration:run
-      - mkdir -p build/tmp/sessions
-      - chmod 777 build/tmp
-      - chmod 777 build/tmp/sessions
 artifacts:
   files:
     - '**/*'
