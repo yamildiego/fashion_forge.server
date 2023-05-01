@@ -12,7 +12,9 @@ const LocalhostConfig = {
     sameSite: false,
   },
   age: '2h',
-  file: {},
+  file: {
+    location: '/tmp/sessions',
+  },
   redisConnection: 'local',
 }
 
@@ -25,7 +27,7 @@ const ServerConfig = {
     domain: '.yamildiego.com',
     path: '/',
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: 'none' as 'none',
     secure: true,
   },
   age: '2h',

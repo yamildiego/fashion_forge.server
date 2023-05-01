@@ -75,7 +75,7 @@ export default class JobsController {
     }
   }
 
-  public async getJobById({ params, request }: HttpContextContract) {
+  public async getJobById({ params, response, request }: HttpContextContract) {
     const newJobSchema = schema.create({ id: schema.number() })
 
     try {

@@ -93,7 +93,7 @@ export default class UsersController {
     return 'OK'
   }
 
-  public async getCurrentUser({ params, request }: HttpContextContract) {
+  public async getCurrentUser({ request }: HttpContextContract) {
     return request.user
   }
 }
