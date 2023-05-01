@@ -13,6 +13,8 @@ import TypesOfClothing from 'App/Assets/TypesOfClothing.json'
 
 import Application from '@ioc:Adonis/Core/Application'
 
+import path from 'path'
+
 type StatusType = 'DRAFT' | 'PUBLISHED' | 'ASSINGNED' | 'SHIPPED' | 'FINISHED'
 
 export default class JobsController {
@@ -229,7 +231,9 @@ export default class JobsController {
     const transporter = nodemailer.createTransport(mailConfig)
     transporter.verify().then(console.log).catch(console.error)
 
-    let html = fs.readFileSync('../../Assets/email.html', 'utf8')
+    const pathEmailFile = path.join(__dirname, '../../../app/Assets/email.html')
+
+    let html = fs.readFileSync(pathEmailFile, 'utf8')
     html = html.replace('{{NAME}}', name)
     html = html.replace('{{LASTNAME}}', lastname)
     html = html.replace('{{JOB}}', job)
