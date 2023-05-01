@@ -229,7 +229,7 @@ export default class JobsController {
     const transporter = nodemailer.createTransport(mailConfig)
     transporter.verify().then(console.log).catch(console.error)
 
-    let html = fs.readFileSync('App/Assets/email.html', 'utf8')
+    let html = fs.readFileSync('../../Assets/email.html', 'utf8')
     html = html.replace('{{NAME}}', name)
     html = html.replace('{{LASTNAME}}', lastname)
     html = html.replace('{{JOB}}', job)
