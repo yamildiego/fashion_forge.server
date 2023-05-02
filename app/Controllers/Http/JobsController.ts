@@ -129,17 +129,15 @@ export default class JobsController {
     }
   }
 
-  public async publishJob({ request, response }: HttpContextContract) {
-    const newJobSchema = schema.create({
-      job_id: schema.number(),
-    })
+  public async publishJob({ request, response, params }: HttpContextContract) {
+    const newJobSchema = schema.create({ id: schema.number() })
 
     try {
-      const payload = await request.validate({ schema: newJobSchema })
+      const payload = await request.validate({ schema: newJobSchema, data: params })
 
-      const job = await Job.find(payload.job_id)
+      const job = await Job.find(payload.id)
 
-      if (job !== null && job.status == 'DRAFT') {
+      if (job !== null && job.status === 'DRAFT') {
         job.merge({ status: 'PUBLISHED' })
         await job.save()
       }
@@ -208,7 +206,7 @@ export default class JobsController {
       quote: schema.string(),
       estimated_time: schema.number.optional(),
       comments: schema.string.optional(),
-      job_id: schema.number(),
+      id: schema.number(),
     })
 
     let quote: Quote | null = null
@@ -216,7 +214,7 @@ export default class JobsController {
 
     try {
       const payload = await request.validate({ schema: newJobSchema })
-      job = await Job.query().preload('user').where('id', payload.job_id).firstOrFail()
+      job = await Job.query().preload('user').where('id', payload.id).firstOrFail()
 
       // 15% is added for the cost
       if (job !== null) {
