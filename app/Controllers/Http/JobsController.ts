@@ -238,7 +238,7 @@ export default class JobsController {
           job.user.lastname,
           job.user.email,
           TypesOfClothing[job.type_of_clothing],
-          'https://acadeberiairunlionkrea.com/' + quote.id
+          'https://tmi.yamildiego.com/viewQuotes/' + job.id
         )
       }
     }
@@ -256,17 +256,17 @@ export default class JobsController {
     html = html.replace('{{JOB}}', job)
     html = html.replace('{{LINK}}', link)
 
-    transporter
-      .sendMail({
-        from: '"Test Meydit" <yamildiego91@gmail.com>',
-        to: email,
-        subject: 'MEYD.IT Iternship ✔',
-        html: html,
-      })
-      .then((info) => {
-        console.log({ info })
-      })
-      .catch(console.error)
+    // transporter
+    //   .sendMail({
+    //     from: '"Test Meydit" <yamildiego91@gmail.com>',
+    //     to: email,
+    //     subject: 'MEYD.IT Iternship ✔',
+    //     html: html,
+    //   })
+    //   .then((info) => {
+    //     console.log({ info })
+    //   })
+    //   .catch(console.error)
   }
 
   public async uploadImages({ request }: HttpContextContract) {
