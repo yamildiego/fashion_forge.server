@@ -3,17 +3,16 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Job from 'App/Models/Job'
 import Quote from 'App/Models/Quote'
 import Image from 'App/Models/Image'
-import nodemailer from 'nodemailer'
-import fs from 'fs'
+
+// import nodemailer from 'nodemailer'
+// import fs from 'fs'
+// import path from 'path'
+// import mailConfig from '../../../config/mailConfig'
+// import TypesOfClothing from 'App/Assets/TypesOfClothing.json'
+
 import { schema, rules } from '@ioc:Adonis/Core/Validator'
 
-import mailConfig from '../../../config/mailConfig'
-
-import TypesOfClothing from 'App/Assets/TypesOfClothing.json'
-
 import Application from '@ioc:Adonis/Core/Application'
-
-import path from 'path'
 
 type StatusType = 'DRAFT' | 'PUBLISHED' | 'ASSINGNED' | 'SHIPPED' | 'FINISHED'
 
@@ -233,41 +232,38 @@ export default class JobsController {
       response.badRequest(error.messages)
     } finally {
       if (quote && job) {
-        this.sendEmail(
-          job.user.name,
-          job.user.lastname,
-          job.user.email,
-          TypesOfClothing[job.type_of_clothing],
-          'https://tmi.yamildiego.com/viewQuotes/' + job.id
-        )
+        // this.sendEmail(
+        //   job.user.name,
+        //   job.user.lastname,
+        //   job.user.email,
+        //   TypesOfClothing[job.type_of_clothing],
+        //   'https://tmi.yamildiego.com/viewQuotes/' + job.id
+        // )
       }
     }
   }
 
-  private sendEmail = (name, lastname, email, job, link) => {
-    const transporter = nodemailer.createTransport(mailConfig)
-    transporter.verify().then(console.log).catch(console.error)
-
-    const pathEmailFile = path.join(__dirname, '../../../app/Assets/email.html')
-
-    let html = fs.readFileSync(pathEmailFile, 'utf8')
-    html = html.replace('{{NAME}}', name)
-    html = html.replace('{{LASTNAME}}', lastname)
-    html = html.replace('{{JOB}}', job)
-    html = html.replace('{{LINK}}', link)
-
-    // transporter
-    //   .sendMail({
-    //     from: '"Test Meydit" <yamildiego91@gmail.com>',
-    //     to: email,
-    //     subject: 'MEYD.IT Iternship ✔',
-    //     html: html,
-    //   })
-    //   .then((info) => {
-    //     console.log({ info })
-    //   })
-    //   .catch(console.error)
-  }
+  // private sendEmail = (name, lastname, email, job, link) => {
+  //   const transporter = nodemailer.createTransport(mailConfig)
+  //   transporter.verify().then(console.log).catch(console.error)
+  //   const pathEmailFile = path.join(__dirname, '../../../app/Assets/email.html')
+  //   let html = fs.readFileSync(pathEmailFile, 'utf8')
+  //   html = html.replace('{{NAME}}', name)
+  //   html = html.replace('{{LASTNAME}}', lastname)
+  //   html = html.replace('{{JOB}}', job)
+  //   html = html.replace('{{LINK}}', link)
+  //   transporter
+  //     .sendMail({
+  //       from: '"Test Meydit" <yamildiego91@gmail.com>',
+  //       to: email,
+  //       subject: 'MEYD.IT Iternship ✔',
+  //       html: html,
+  //     })
+  //     .then((info) => {
+  //       console.log({ info })
+  //     })
+  //     .catch(console.error)
+  // }
 
   public async uploadImages({ request }: HttpContextContract) {
     const files: any[] = request.files('images', {
